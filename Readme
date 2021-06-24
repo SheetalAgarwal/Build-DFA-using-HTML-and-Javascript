@@ -1,0 +1,4 @@
+#Build DFA using HTML and Javascript
+DFA stands for Deterministic Finite Automata. This programm allows the users to input its DFA to the programm and then check for different strins as whether 
+the string reaches the accepting state of the DFA or not. The DFA is input by feeding the no of states, the transition matrix and the finish states.
+Run the main file. Add the details as prompted and test for different input strings. 

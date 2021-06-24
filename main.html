@@ -1,0 +1,157 @@
+<!Doctype html>
+<Html>
+	<head>
+		<Title>Definite finite automata</Title>
+		<meta http-equiv="content type" content="text/html; charset=utf-8;">
+	<script>
+		var finalArray=[];
+		var transitions=[];
+		function createBoxes(obj,str,type)
+		{
+			var i=obj.value-1;
+		while(i>=0)
+		{
+		var container=document.getElementById(str);
+		var b=document.createElement('input');
+		b.type= type;
+		b.name= str+"Chk";
+		if(type=="checkbox")b.value=i; else b.value="-";
+		if(type=="text")b.style["width"]="30px";
+		b.id= str+"q"+i;  //ID of each checkbox is (name of container)+(state no) example cbq1 and trans1q1
+		var label = document.createElement('label')
+		label.htmlFor = str+"q"+i;
+		label.appendChild(document.createTextNode('Q'+i));
+		container.appendChild(b);
+		container.appendChild(label);
+		i-=1;
+		}
+		}
+		function myF()
+			{
+				var obj=document.getElementById('States');
+				createBoxes(obj,"finals","checkbox");
+		for(var i=0; i<obj.value; i++)
+			{
+				var List=document.getElementById("trans");
+				var entry=document.createElement('li');
+				entry.id="trans"+i;  
+			//ID for each list item i.e; the paths from state i is trans i eg:trans1 means list item with all checkboxes defining paths of q1
+				entry.appendChild(document.createTextNode("From Q"+i+" to the following states:  "));
+				List.appendChild(entry);
+				List.appendChild(document.createElement('br'));
+				//create checkboxes for all states
+				createBoxes(obj,"trans"+i,"text");	
+			}
+			}
+
+		function createDFA()
+		{	
+	//this function collects the form values and creates the dfa in form of an 2d-array.
+	//finalArray stores all the final states in ascending order.
+			var chkname="finalsChk";
+			var checkboxes=document.getElementsByName(chkname);	
+			for(var i=0;i<checkboxes.length;i++)
+			{
+		
+				if(checkboxes[i].checked) finalArray.push(checkboxes[i].value);
+			}	
+			finalArray.reverse();
+		
+			//transitions is a2d array starting from index 0
+			var states=document.getElementById('States').value;
+			for(var i=0;i<states;i++)
+			{
+			var textboxes=document.getElementsByName("trans"+i+"Chk");
+			transitions[i]=[];
+			for (var j=0;j<states;j++)
+				{
+				transitions[i].push(textboxes[j].value);
+				}
+				transitions[i].reverse();
+			}
+       		alert("DFA is created successfully!");
+		
+		}
+
+		function checkString()
+{
+		var st=document.getElementById('st');
+  		var res=document.getElementById('res');
+       		st.innerHTML="";
+       		res.innerHTML="";
+		var state=0;
+		var flag;
+		var result="Rejected";
+		var states=document.getElementById('States').value;
+		var str=document.getElementById('String').value;
+		var strArray=str.split("");
+		for(var i=0;i<strArray.length;i++)
+		{
+			flag=0;
+			for(var x=0;x<states;x++)
+			{
+				if(transitions[state][x].includes(strArray[i]))
+				{
+					state=x;
+					flag=1;
+					break;
+				}
+			}
+			if(flag==0) 
+			{
+				result="Rejected";
+				break;
+			}
+		}
+	for(var i=0;i<finalArray.length;i++)
+	{
+		if(state==finalArray[i] && flag==1)
+		{
+		result="Accepted";
+		}
+	}
+
+  //To display the halt state and result status.
+  
+  var s=document.createTextNode(state);
+  var r=document.createTextNode(result);
+  st.appendChild(s);
+  res.appendChild(r);
+//  res.style.fontSize="xx-large";
+  res.style.fontWeight="900";
+}
+	</script>
+	</head>
+	<body style="background-color:olive" style="font-family:georgia; font-size:30px;">
+		<h1 align="center"><b>Create your own DFA</b></h1>
+			<form name="DFAStates">
+<p style="font-family:Times New Roman; font-size:25px;"><u>Number of states</u>:&nbsp; 
+<input type="num" name="states" id="States" size=20px>
+			&nbsp; &nbsp;
+			<br><small>(We assume q0 to be the initial state)</small></p>
+			<input type="button" value="OK" onclick="myF();">
+			<br>
+			<p style="font-family:Times New Roman; font-size:25px;">
+			<u>Final states</u>:<small>(Select the final states)</small></p>
+			<div id="finals" style="font-family:Times new roman; font-size:25px;"></div>
+			<p style="font-family:Times new roman; font-size:25px;">
+			<u>Transitions</u>:<small>(Fill the boxes with the input symbols for that edge and leave blank if no edge.)</small></p>
+			<ol id="trans" style="font-family:Times new roman; font-size:25px;"></ol>
+			<input type="button" value="Submit DFA" onclick="createDFA()">
+			</form>
+			<h1 align="center"><b>Check your string</b></h1>
+			<form name="StringCheck">
+				<p style="font-family:georgia; font-size:27px;">	<u><i>Enter your string</i></u>:&nbsp;
+				<input type="text" name="string" id="String" size=20px>
+				&nbsp;&nbsp;
+				<input type="button" value="Test String" onclick="checkString()">
+				</p>
+			</form>
+			<h1 align="center"><b>Result</b></h1> 
+			<p style="font-family:georgia; font-size:25px;">	<u><i>Halt State</i></u>:</p>
+			<p id="st" style="font-family:georgia; font-size:30px;"><b></b></p>
+			<p style="font-family:georgia; font-size:25px;"><u><i>Result</i></u>:</p>
+			<p id="res" style="font-family:Arial Black; font-size:40px;"><b></b></p>
+		
+	</body>
+	</html>
